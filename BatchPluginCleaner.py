@@ -48,7 +48,7 @@ class PluginListModel(QAbstractItemModel):
 
     def rowCount(self, index):
         return len(self.__data)
-    
+
     def columnCount(self, index):
         return 1
 
@@ -62,7 +62,7 @@ class PluginListModel(QAbstractItemModel):
 
         if role in (Qt.ItemDataRole.DisplayRole, Qt.ItemDataRole.EditRole):
             return self.__data[row][1]
-        
+
         return None
 
     def setData(self, index, value, role):
@@ -73,13 +73,13 @@ class PluginListModel(QAbstractItemModel):
                 inState = True
             elif value == 0:
                 inState = False
-            
+
             if (inState != None):
                 self.__data[index.row()] = (inState, self.__data[index.row()][1], self.__data[index.row()][2])
                 self.dataChanged.emit(index, index, [role])
-        
+
             return True
-        
+
         return False
 
     def addPlugin(self, pluginName, priority, state):
@@ -103,7 +103,7 @@ class PluginListModel(QAbstractItemModel):
         for i, val in enumerate(self.__data):
             self.__data[i] = (True, val[1], val[2])
         self.endResetModel()
-        
+
     def sortData(self, key):
         self.beginResetModel()
         self.__data.sort(key=key)
@@ -181,7 +181,7 @@ class CleanerPlugin(mobase.IPluginTool):
 
     def name(self):
         return "Batch Plugin Cleaner"
-        
+
     def author(self):
         return "bluebuiy"
 
@@ -220,7 +220,7 @@ class CleanerPlugin(mobase.IPluginTool):
         self.__parentWidget = widget
 
     def display(self):
-        
+
         self.__dialog = PluginSelectWindow(self.__parentWidget)
 
         self.__dialog.startAction.connect(self.__start)
@@ -244,7 +244,7 @@ class CleanerPlugin(mobase.IPluginTool):
                     pluginDefaultState = True
                 if (isBeth == False and isCC == False and cleanElse == True):
                     pluginDefaultState = True
-                
+
                 self.__dialog.addPlugin(plugin, pluginList.priority(plugin), pluginDefaultState)
 
         if self.__organizer.pluginSetting(self.name(), "sort_by_priority"):
@@ -261,13 +261,13 @@ class CleanerPlugin(mobase.IPluginTool):
         self.__cleaning = True
         failed = []
         # Change to FO4Edit or whatever for whatever version of xEdit you are using.
-        xEditPath = "xEdit" if self.__organizer.pluginSetting(self.name(), "exe_name_xedit") else "SSEEdit" 
+        xEditPath = "xEdit" if self.__organizer.pluginSetting(self.name(), "exe_name_xedit") else "SSEEdit"
         cleanCount = 0
         pluginNames = list(pluginNamesSet)
         # sort the plugins so they are cleaned by priority
         pluginNames.sort(key=lambda pluginName: 0 - self.__organizer.pluginList().priority(pluginName))
         for plugin in pluginNames:
-            
+
             if self.__canceled:
                 self.__canceled = False
                 break
@@ -284,7 +284,7 @@ class CleanerPlugin(mobase.IPluginTool):
                 args.append(f"-{gameArg}")
 
             exe = self.__organizer.startApplication(xEditPath, args)
-            
+
             if exe != 0:
                 waitResult, exitCode = self.__organizer.waitForApplication(exe, False)
                 if not waitResult:
@@ -303,9 +303,8 @@ class CleanerPlugin(mobase.IPluginTool):
             QMessageBox.critical(self.__parentWidget, "Failed to clean some plugins!", msg)
         else:
             QMessageBox.information(self.__parentWidget, "Clean successful", f"Successfully cleaned {cleanCount} plugins")
-    
+
         self.__cleaning = False
 
 def createPlugin() -> mobase.IPluginTool:
     return CleanerPlugin()
-    

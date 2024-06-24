@@ -2,7 +2,7 @@
 # for mo 2.5.0+
 # use at your own risk
 
-import mobase
+import mobase # type: ignore
 import re
 from PyQt6.QtCore import Qt, pyqtSignal, QAbstractItemModel, QModelIndex
 from PyQt6.QtGui import QIcon

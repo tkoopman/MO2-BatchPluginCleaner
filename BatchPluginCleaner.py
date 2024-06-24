@@ -4,9 +4,9 @@
 
 import mobase
 import re
-from PyQt6.QtCore import Qt, QCoreApplication, pyqtSlot, pyqtSignal, QAbstractItemModel, QModelIndex
+from PyQt6.QtCore import Qt, pyqtSignal, QAbstractItemModel, QModelIndex
 from PyQt6.QtGui import QIcon
-from PyQt6.QtWidgets import QMessageBox, QDialog, QVBoxLayout, QHBoxLayout, QWidget, QCheckBox, QPushButton, QScrollArea, QListView
+from PyQt6.QtWidgets import QMessageBox, QDialog, QVBoxLayout, QHBoxLayout, QWidget, QCheckBox, QPushButton, QListView
 
 class PluginSelectionLine(QWidget):
 	enableChange = pyqtSignal(bool, str)

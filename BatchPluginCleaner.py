@@ -4,6 +4,7 @@
 
 import mobase # type: ignore
 import re
+import typing
 from PyQt6.QtCore import Qt, pyqtSignal, QAbstractItemModel, QModelIndex
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import QMessageBox, QDialog, QVBoxLayout, QHBoxLayout, QWidget, QCheckBox, QPushButton, QListView
@@ -11,7 +12,7 @@ from PyQt6.QtWidgets import QMessageBox, QDialog, QVBoxLayout, QHBoxLayout, QWid
 class PluginSelectionLine(QWidget):
 	enableChange = pyqtSignal(bool, str)
 
-	def __init__(self, pluginName, parent=None):
+	def __init__(self, pluginName: str, parent: typing.Optional[QWidget]=None) -> None:
 		super(PluginSelectionLine, self).__init__(parent)
 		self.__pluginName = pluginName
 		self.__checkbox = QCheckBox(pluginName, self)
@@ -20,39 +21,39 @@ class PluginSelectionLine(QWidget):
 		layout = QVBoxLayout(self)
 		layout.addWidget(self.__checkbox)
 
-	def __checkboxChange(self, state):
+	def __checkboxChange(self, state: Qt.CheckState) -> None:
 		self.enableChange.emit(self.__checkbox.isChecked(), self.__pluginName)
 
-	def setState(self, state):
+	def setState(self, state: bool) -> None:
 		if (state == True):
 			self.__checkbox.setCheckState(2)    # 2
 		else:
 			self.__checkbox.setCheckState(0)  # 0
 
 class PluginListModel(QAbstractItemModel):
-	def __init__(self, parent=None):
+	def __init__(self, parent: typing.Optional[QWidget]=None) -> None:
 		super(PluginListModel, self).__init__(parent)
-		self.__data = []
+		self.__data: list[tuple[bool, str, int]] = []
 
-	def flags(self, index):
+	def flags(self, index: QModelIndex) -> Qt.ItemFlag:
 		if index.isValid():
 			return Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsUserCheckable
 
-	def index(self, row, col, parent):
+	def index(self, row: int, col: int, parent: QModelIndex) -> QModelIndex:
 		if col == 0:
 			return self.createIndex(row, col, self.__data[row][1])
 		return QModelIndex()
 
-	def parent(self, childIndex):
+	def parent(self, childIndex: QModelIndex) -> QModelIndex:
 		return QModelIndex()
 
-	def rowCount(self, index):
+	def rowCount(self, index: QModelIndex) -> int:
 		return len(self.__data)
 
-	def columnCount(self, index):
+	def columnCount(self, index: QModelIndex) -> int:
 		return 1
 
-	def data(self, index, role):
+	def data(self, index: QModelIndex, role: int):
 		row = index.row()
 		if role == Qt.ItemDataRole.CheckStateRole:
 			if self.__data[row][0] == True:
@@ -65,7 +66,7 @@ class PluginListModel(QAbstractItemModel):
 
 		return None
 
-	def setData(self, index, value, role):
+	def setData(self, index: QModelIndex, value: typing.Any, role: int) -> bool:
 		if role == Qt.ItemDataRole.CheckStateRole and index.isValid():
 			inState = None
 			# I have no idea how these are supposed to be referenced. Qt.CheckState.Checked and Qt.CheckState.Unchecked are not working.
@@ -82,29 +83,29 @@ class PluginListModel(QAbstractItemModel):
 
 		return False
 
-	def addPlugin(self, pluginName, priority, state):
+	def addPlugin(self, pluginName: str, priority: int, state: bool) -> None:
 		self.__data.append((state, pluginName, priority))
 
-	def getEnabledPlugins(self) -> set:
+	def getEnabledPlugins(self) -> set[str]:
 		ret = set()
 		for item in self.__data:
 			if item[0] == True:
 				ret.add(item[1])
 		return ret
 
-	def deselectAll(self):
+	def deselectAll(self) -> None:
 		self.beginResetModel()
 		for i, val in enumerate(self.__data):
 			self.__data[i] = (False, val[1], val[2])
 		self.endResetModel()
 
-	def selectAll(self):
+	def selectAll(self) -> None:
 		self.beginResetModel()
 		for i, val in enumerate(self.__data):
 			self.__data[i] = (True, val[1], val[2])
 		self.endResetModel()
 
-	def sortData(self, key):
+	def sortData(self, key: typing.Callable) -> None:
 		self.beginResetModel()
 		self.__data.sort(key=key)
 		self.endResetModel()
@@ -113,7 +114,7 @@ class PluginSelectWindow(QDialog):
 	startAction = pyqtSignal()
 	cancelAction = pyqtSignal()
 
-	def __init__(self, parent=None):
+	def __init__(self, parent: typing.Optional[QWidget]=None) -> None:
 		super(PluginSelectWindow, self).__init__(parent)
 		self.setWindowFlags(self.windowFlags() & ~Qt.WindowType.WindowContextHelpButtonHint)
 		self.__listModel = PluginListModel()
@@ -146,31 +147,31 @@ class PluginSelectWindow(QDialog):
 		startButton.clicked.connect(self.__startPressed)
 		#cancelButton.clicked.connect(self.__cancel)
 
-	def addPlugin(self, pluginName, priority, defaultState):
+	def addPlugin(self, pluginName: str, priority: int, defaultState: bool) -> None:
 		self.__listModel.addPlugin(pluginName, priority, defaultState)
 
 
-	def getPluginList(self):
+	def getPluginList(self) -> set[str]:
 		return self.__listModel.getEnabledPlugins()
 
-	def sortPlugins(self, key):
+	def sortPlugins(self, key: typing.Callable) -> None:
 		self.__listModel.sortData(key)
 		#self.__listModel.dataChanged.emit(0, len(__listModel.__data) - 1, Qt.ItemDataRole.EditRole)
 
-	def __startPressed(self):
+	def __startPressed(self) -> None:
 		self.startAction.emit()
 
-	def __cancel(self):
+	def __cancel(self) -> None:
 		self.cancelAction.emit()
 
-	def __selectNone(self):
+	def __selectNone(self) -> None:
 		self.__listModel.deselectAll()
 
-	def __selectAll(self):
+	def __selectAll(self) -> None:
 		self.__listModel.selectAll()
 
 class CleanerPlugin(mobase.IPluginTool):
-	def __init__(self):
+	def __init__(self) -> None:
 		super().__init__()
 		self.__canceled = False
 		self.__cleaning = False
@@ -179,28 +180,28 @@ class CleanerPlugin(mobase.IPluginTool):
 		self.__organizer = organizer
 		return True
 
-	def name(self):
+	def name(self) -> str:
 		return "Batch Plugin Cleaner"
 
-	def author(self):
 		return "bluebuiy"
+	def author(self) -> str:
 
-	def displayName(self):
+	def displayName(self) -> str:
 		return "Clean Plugins"
 
-	def description(self):
+	def description(self) -> str:
 		return "Clean all plugins with one button. Requres FO4Edit."
 
-	def version(self):
 		return mobase.VersionInfo(0, 7, 0, mobase.ReleaseType.CANDIDATE)
+	def version(self) -> mobase.VersionInfo:
 
-	def isActive(self):
+	def isActive(self) -> mobase.MoVariant:
 		return self.__organizer.pluginSetting(self.name(), "enabled")
 
-	def tooltip(self):
+	def tooltip(self) -> str:
 		return "Clean all plugins at once"
 
-	def settings(self):
+	def settings(self) -> list[mobase.PluginSetting]:
 		return [
 			mobase.PluginSetting("enabled", "Enable this plugin", True),
 			mobase.PluginSetting("clean_cc", "Clean Creation Club plugins", True),
@@ -213,13 +214,13 @@ class CleanerPlugin(mobase.IPluginTool):
 			mobase.PluginSetting("exe_name_xedit", "Invoke xEdit as xEdit, not FO4Edit. You probably need explicit_game_arg too.", False)
 		]
 
-	def icon(self):
+	def icon(self) -> QIcon:
 		return QIcon()
 
-	def setParentWidget(self, widget):
+	def setParentWidget(self, widget: QWidget) -> None:
 		self.__parentWidget = widget
 
-	def display(self):
+	def display(self) -> None:
 
 		self.__dialog = PluginSelectWindow(self.__parentWidget)
 
@@ -254,10 +255,10 @@ class CleanerPlugin(mobase.IPluginTool):
 
 		self.__dialog.open()
 
-	def __start(self):
+	def __start(self) -> None:
 		self.runClean(self.__dialog.getPluginList())
 
-	def runClean(self, pluginNamesSet):
+	def runClean(self, pluginNamesSet: set[str]) -> None:
 		self.__cleaning = True
 		failed = []
 		# Change to FO4Edit or whatever for whatever version of xEdit you are using.

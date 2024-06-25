@@ -225,6 +225,7 @@ class CleanerPlugin(mobase.IPluginTool):
 			"DLCworkshop03.esm",
 			"DLCCoast.esm",
 			"DLCNukaWorld.esm",
+			"DLCUltraHighResolution.esm",
 		}
 		matcher = re.compile("cc\w{6}[0-9]{3}-")
 		cleanCC = self.__organizer.pluginSetting(self.name(), "clean_cc")

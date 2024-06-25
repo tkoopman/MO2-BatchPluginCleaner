@@ -27,7 +27,7 @@ class PluginSelectionLine(QWidget):
 		self.enableChange.emit(self.__checkbox.isChecked(), self.__pluginName)
 
 	def setState(self, state: bool) -> None:
-		if (state == True):
+		if state:
 			self.__checkbox.setCheckState(2)
 		else:
 			self.__checkbox.setCheckState(0)
@@ -58,7 +58,7 @@ class PluginListModel(QAbstractItemModel):
 	def data(self, index: QModelIndex, role: int):
 		row = index.row()
 		if role == Qt.ItemDataRole.CheckStateRole:
-			if self.__data[row][0] == True:
+			if self.__data[row][0]:
 				return Qt.CheckState.Checked
 			else:
 				return Qt.CheckState.Unchecked
@@ -76,7 +76,7 @@ class PluginListModel(QAbstractItemModel):
 			elif value == 0:
 				inState = False
 
-			if (inState != None):
+			if inState is not None:
 				self.__data[index.row()] = (inState, self.__data[index.row()][1], self.__data[index.row()][2])
 				self.dataChanged.emit(index, index, [role])
 
@@ -89,7 +89,7 @@ class PluginListModel(QAbstractItemModel):
 	def getEnabledPlugins(self) -> set[str]:
 		ret = set()
 		for item in self.__data:
-			if item[0] == True:
+			if item[0]:
 				ret.add(item[1])
 		return ret
 
@@ -216,7 +216,8 @@ class CleanerPlugin(mobase.IPluginTool):
 		self.__dialog.startAction.connect(self.__start)
 
 		pluginList = self.__organizer.pluginList()
-		pluginNames = pluginList.pluginNames()
+		pluginNames = list(pluginList.pluginNames())
+		pluginNames.remove("Fallout4.esm")
 
 		# Exclude Fallout4.esm because it should not be cleaned.
 		bethPlugins = {
@@ -233,17 +234,16 @@ class CleanerPlugin(mobase.IPluginTool):
 		cleanBeth = self.__organizer.pluginSetting(self.name(), "clean_beth")
 		cleanElse = self.__organizer.pluginSetting(self.name(), "clean_else")
 		for plugin in pluginNames:
-			if (plugin != "Fallout4.esm"):
-				pluginDefaultState = False
-				isCC = matcher.match(plugin) != None
-				isBeth = plugin in bethPlugins
+			pluginDefaultState = False
+			isCC = matcher.match(plugin) != None
+			isBeth = plugin in bethPlugins
 
-				if ((cleanCC and isCC) or (cleanBeth and isBeth)):
-					pluginDefaultState = True
-				if (isBeth == False and isCC == False and cleanElse == True):
-					pluginDefaultState = True
+			if (cleanCC and isCC) or (cleanBeth and isBeth):
+				pluginDefaultState = True
+			if not isBeth and not isCC and cleanElse:
+				pluginDefaultState = True
 
-				self.__dialog.addPlugin(plugin, pluginList.priority(plugin), pluginDefaultState)
+			self.__dialog.addPlugin(plugin, pluginList.priority(plugin), pluginDefaultState)
 
 		if self.__organizer.pluginSetting(self.name(), "sort_by_priority"):
 			self.__dialog.sortPlugins(key=lambda tup: tup[2])

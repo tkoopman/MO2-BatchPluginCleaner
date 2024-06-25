@@ -117,6 +117,7 @@ class PluginSelectWindow(QDialog):
 	def __init__(self, parent: typing.Optional[QWidget]=None) -> None:
 		super(PluginSelectWindow, self).__init__(parent)
 		self.setWindowFlags(self.windowFlags() & ~Qt.WindowType.WindowContextHelpButtonHint)
+		self.setWindowTitle("Batch Plugin Cleaner")
 		self.resize(400, 600)
 		self.__listModel = PluginListModel()
 		self.__layout = QHBoxLayout()

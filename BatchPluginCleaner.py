@@ -11,6 +11,25 @@ from PyQt6.QtCore import Qt, pyqtSignal, QAbstractItemModel, QModelIndex
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import QMessageBox, QDialog, QVBoxLayout, QHBoxLayout, QWidget, QCheckBox, QPushButton, QListView
 
+xEditExeName = "FO4Edit"
+mainMaster = "Fallout4.esm"
+bethPlugins = {
+	"DLCRobot.esm",
+	"DLCworkshop01.esm",
+	"DLCworkshop02.esm",
+	"DLCworkshop03.esm",
+	"DLCCoast.esm",
+	"DLCNukaWorld.esm",
+	"DLCUltraHighResolution.esm",
+}
+launchOptions = [
+	"-IKnowWhatImDoing",
+	"-QuickAutoClean",
+	"-autoexit",
+	"-autoload",
+]
+ccPattern = re.compile("cc\w{6}[0-9]{3}-")
+
 class PluginSelectionLine(QWidget):
 	enableChange = pyqtSignal(bool, str)
 
@@ -182,7 +201,7 @@ class CleanerPlugin(mobase.IPluginTool):
 		return "Clean Plugins"
 
 	def description(self) -> str:
-		return "Clean all plugins with one button. Requres FO4Edit."
+		return f"Clean all plugins with one button. Requres {xEditExeName}."
 
 	def version(self) -> mobase.VersionInfo:
 		return mobase.VersionInfo(1, 0, 0)
@@ -203,7 +222,7 @@ class CleanerPlugin(mobase.IPluginTool):
 			mobase.PluginSetting("explicit_data_path", "If the data directory should be explicitly provided.  May need to be enabled if you get errors from xEdit.", False),
 			mobase.PluginSetting("explicit_ini_path", "If the ini path should be explicitly provided.  May need to be enabled if you get errors from xEdit.", False),
 			mobase.PluginSetting("explicit_game_arg", "Adds -<game> as an argument to xEdit. Options: sse tes5vr fo4vr test4 tes5 enderal fo3 fnv fo4 fo76", ""),
-			mobase.PluginSetting("exe_name_xedit", "Invoke xEdit as xEdit, not FO4Edit. You probably need explicit_game_arg too.", False)
+			mobase.PluginSetting("exe_name_xedit", f"Invoke xEdit as xEdit, not {xEditExeName}. You probably need explicit_game_arg too.", False)
 		]
 
 	def icon(self) -> QIcon:
@@ -218,19 +237,9 @@ class CleanerPlugin(mobase.IPluginTool):
 
 		pluginList = self.__organizer.pluginList()
 		pluginNames = list(pluginList.pluginNames())
-		pluginNames.remove("Fallout4.esm")
+		# Exclude main esm because it should not be cleaned.
+		pluginNames.remove(mainMaster)
 
-		# Exclude Fallout4.esm because it should not be cleaned.
-		bethPlugins = {
-			"DLCRobot.esm",
-			"DLCworkshop01.esm",
-			"DLCworkshop02.esm",
-			"DLCworkshop03.esm",
-			"DLCCoast.esm",
-			"DLCNukaWorld.esm",
-			"DLCUltraHighResolution.esm",
-		}
-		matcher = re.compile("cc\w{6}[0-9]{3}-")
 		cleanCC = self.__organizer.pluginSetting(self.name(), "clean_cc")
 		cleanBeth = self.__organizer.pluginSetting(self.name(), "clean_beth")
 		cleanElse = self.__organizer.pluginSetting(self.name(), "clean_else")
@@ -238,7 +247,7 @@ class CleanerPlugin(mobase.IPluginTool):
 			pluginDefaultState = False
 
 			if pluginList.state(plugin) == mobase.PluginState.ACTIVE:
-				isCC = matcher.match(plugin) != None
+				isCC = ccPattern.match(plugin) is not None
 				isBeth = plugin in bethPlugins
 				if (cleanCC and isCC) or (cleanBeth and isBeth):
 					pluginDefaultState = True
@@ -259,8 +268,7 @@ class CleanerPlugin(mobase.IPluginTool):
 
 	def runClean(self, pluginNamesSet: set[str]) -> None:
 		failed = []
-		# Change to FO4Edit or whatever for whatever version of xEdit you are using.
-		xEditPath = "xEdit" if self.__organizer.pluginSetting(self.name(), "exe_name_xedit") else "FO4Edit"
+		xEditPath = "xEdit" if self.__organizer.pluginSetting(self.name(), "exe_name_xedit") else xEditExeName
 		cleanCount = 0
 		pluginNames = list(pluginNamesSet)
 		# Sort the plugins so they are cleaned by priority
@@ -271,13 +279,8 @@ class CleanerPlugin(mobase.IPluginTool):
 				self.__canceled = False
 				break
 
-			args = [
-				"-IKnowWhatImDoing",
-				"-QuickAutoClean",
-				"-autoexit",
-				"-autoload",
-				f"\"{plugin}\""
-			]
+			args = list(launchOptions)
+			args.append(f"\"{plugin}\"")
 
 			if self.__organizer.pluginSetting(self.name(), "explicit_data_path"):
 				args.append(f"-D:\"{self.__organizer.managedGame().dataDirectory().absolutePath()}\"")

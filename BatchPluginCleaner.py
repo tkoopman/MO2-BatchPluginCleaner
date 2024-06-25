@@ -235,13 +235,14 @@ class CleanerPlugin(mobase.IPluginTool):
 		cleanElse = self.__organizer.pluginSetting(self.name(), "clean_else")
 		for plugin in pluginNames:
 			pluginDefaultState = False
-			isCC = matcher.match(plugin) != None
-			isBeth = plugin in bethPlugins
 
-			if (cleanCC and isCC) or (cleanBeth and isBeth):
-				pluginDefaultState = True
-			if not isBeth and not isCC and cleanElse:
-				pluginDefaultState = True
+			if pluginList.state(plugin) == mobase.PluginState.ACTIVE:
+				isCC = matcher.match(plugin) != None
+				isBeth = plugin in bethPlugins
+				if (cleanCC and isCC) or (cleanBeth and isBeth):
+					pluginDefaultState = True
+				if not isBeth and not isCC and cleanElse:
+					pluginDefaultState = True
 
 			self.__dialog.addPlugin(plugin, pluginList.priority(plugin), pluginDefaultState)
 

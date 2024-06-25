@@ -1,6 +1,8 @@
-# by bluebuiy
-# for mo 2.5.0+
-# use at your own risk
+# Original plugin created for Skyrim by bluebuiy
+# Original Mod Page: https://www.nexusmods.com/skyrimspecialedition/mods/59598
+# This ver Mod Page: https://www.nexusmods.com/fallout4/mods/84962
+# Modified for Fallout 4
+# For mo 2.5.0+. Use at your own risk.
 
 import mobase # type: ignore
 import re
@@ -183,8 +185,8 @@ class CleanerPlugin(mobase.IPluginTool):
 	def name(self) -> str:
 		return "Batch Plugin Cleaner"
 
-		return "bluebuiy"
 	def author(self) -> str:
+		return "bluebuiy & wxMichael"
 
 	def displayName(self) -> str:
 		return "Clean Plugins"
@@ -192,8 +194,8 @@ class CleanerPlugin(mobase.IPluginTool):
 	def description(self) -> str:
 		return "Clean all plugins with one button. Requres FO4Edit."
 
-		return mobase.VersionInfo(0, 7, 0, mobase.ReleaseType.CANDIDATE)
 	def version(self) -> mobase.VersionInfo:
+		return mobase.VersionInfo(1, 0, 0)
 
 	def isActive(self) -> mobase.MoVariant:
 		return self.__organizer.pluginSetting(self.name(), "enabled")

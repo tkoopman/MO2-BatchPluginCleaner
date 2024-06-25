@@ -11,24 +11,24 @@ from PyQt6.QtCore import Qt, pyqtSignal, QAbstractItemModel, QModelIndex
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import QMessageBox, QDialog, QVBoxLayout, QHBoxLayout, QWidget, QCheckBox, QPushButton, QListView
 
-xEditExeName = "FO4Edit"
-mainMaster = "Fallout4.esm"
+xEditExeName = 'FO4Edit'
+mainMaster = 'Fallout4.esm'
 bethPlugins = {
-	"DLCRobot.esm",
-	"DLCworkshop01.esm",
-	"DLCworkshop02.esm",
-	"DLCworkshop03.esm",
-	"DLCCoast.esm",
-	"DLCNukaWorld.esm",
-	"DLCUltraHighResolution.esm",
+	'DLCRobot.esm',
+	'DLCworkshop01.esm',
+	'DLCworkshop02.esm',
+	'DLCworkshop03.esm',
+	'DLCCoast.esm',
+	'DLCNukaWorld.esm',
+	'DLCUltraHighResolution.esm',
 }
 launchOptions = [
-	"-IKnowWhatImDoing",
-	"-QuickAutoClean",
-	"-autoexit",
-	"-autoload",
+	'-IKnowWhatImDoing',
+	'-QuickAutoClean',
+	'-autoexit',
+	'-autoload',
 ]
-ccPattern = re.compile("cc\w{6}[0-9]{3}-")
+ccPattern = re.compile('cc\w{6}[0-9]{3}-')
 
 class PluginSelectionLine(QWidget):
 	enableChange = pyqtSignal(bool, str)
@@ -136,16 +136,16 @@ class PluginSelectWindow(QDialog):
 	def __init__(self, parent: typing.Optional[QWidget]=None) -> None:
 		super(PluginSelectWindow, self).__init__(parent)
 		self.setWindowFlags(self.windowFlags() & ~Qt.WindowType.WindowContextHelpButtonHint)
-		self.setWindowTitle("Batch Plugin Cleaner")
+		self.setWindowTitle('Batch Plugin Cleaner')
 		self.resize(400, 600)
 		self.__listModel = PluginListModel()
 		self.__layout = QHBoxLayout()
 		self.__listView = QListView()
 		self.__listView.setModel(self.__listModel)
 
-		selectAllButton = QPushButton("Select All")
-		selectNoneButton = QPushButton("Select None")
-		startButton = QPushButton("Clean")
+		selectAllButton = QPushButton('Select All')
+		selectNoneButton = QPushButton('Select None')
+		startButton = QPushButton('Clean')
 
 		self.__layout.addWidget(self.__listView)
 
@@ -192,37 +192,37 @@ class CleanerPlugin(mobase.IPluginTool):
 		return True
 
 	def name(self) -> str:
-		return "Batch Plugin Cleaner"
+		return 'Batch Plugin Cleaner'
 
 	def author(self) -> str:
-		return "bluebuiy & wxMichael"
+		return 'bluebuiy & wxMichael'
 
 	def displayName(self) -> str:
-		return "Clean Plugins"
+		return 'Clean Plugins'
 
 	def description(self) -> str:
-		return f"Clean all plugins with one button. Requres {xEditExeName}."
+		return f'Clean all plugins with one button. Requres {xEditExeName}.'
 
 	def version(self) -> mobase.VersionInfo:
 		return mobase.VersionInfo(1, 0, 0)
 
 	def isActive(self) -> mobase.MoVariant:
-		return self.__organizer.pluginSetting(self.name(), "enabled")
+		return self.__organizer.pluginSetting(self.name(), 'enabled')
 
 	def tooltip(self) -> str:
-		return "Clean all plugins at once"
+		return 'Clean all plugins at once'
 
 	def settings(self) -> list[mobase.PluginSetting]:
 		return [
-			mobase.PluginSetting("enabled", "Enable this plugin", True),
-			mobase.PluginSetting("clean_cc", "Clean Creation Club plugins", True),
-			mobase.PluginSetting("clean_beth", "Clean base game plugins", False),
-			mobase.PluginSetting("clean_else", "Clean mod plugins", True),
-			mobase.PluginSetting("sort_by_priority", "If plugins should be ordered by priority instead of alphabetically", True),
-			mobase.PluginSetting("explicit_data_path", "If the data directory should be explicitly provided.  May need to be enabled if you get errors from xEdit.", False),
-			mobase.PluginSetting("explicit_ini_path", "If the ini path should be explicitly provided.  May need to be enabled if you get errors from xEdit.", False),
-			mobase.PluginSetting("explicit_game_arg", "Adds -<game> as an argument to xEdit. Options: sse tes5vr fo4vr test4 tes5 enderal fo3 fnv fo4 fo76", ""),
-			mobase.PluginSetting("exe_name_xedit", f"Invoke xEdit as xEdit, not {xEditExeName}. You probably need explicit_game_arg too.", False)
+			mobase.PluginSetting('enabled', 'Enable this plugin', True),
+			mobase.PluginSetting('clean_cc', 'Clean Creation Club plugins', True),
+			mobase.PluginSetting('clean_beth', 'Clean base game plugins', False),
+			mobase.PluginSetting('clean_else', 'Clean mod plugins', True),
+			mobase.PluginSetting('sort_by_priority', 'If plugins should be ordered by priority instead of alphabetically', True),
+			mobase.PluginSetting('explicit_data_path', 'If the data directory should be explicitly provided.  May need to be enabled if you get errors from xEdit.', False),
+			mobase.PluginSetting('explicit_ini_path', 'If the ini path should be explicitly provided.  May need to be enabled if you get errors from xEdit.', False),
+			mobase.PluginSetting('explicit_game_arg', 'Adds -<game> as an argument to xEdit. Options: sse tes5vr fo4vr test4 tes5 enderal fo3 fnv fo4 fo76', ''),
+			mobase.PluginSetting('exe_name_xedit', f'Invoke xEdit as xEdit, not {xEditExeName}. You probably need explicit_game_arg too.', False)
 		]
 
 	def icon(self) -> QIcon:
@@ -240,9 +240,9 @@ class CleanerPlugin(mobase.IPluginTool):
 		# Exclude main esm because it should not be cleaned.
 		pluginNames.remove(mainMaster)
 
-		cleanCC = self.__organizer.pluginSetting(self.name(), "clean_cc")
-		cleanBeth = self.__organizer.pluginSetting(self.name(), "clean_beth")
-		cleanElse = self.__organizer.pluginSetting(self.name(), "clean_else")
+		cleanCC = self.__organizer.pluginSetting(self.name(), 'clean_cc')
+		cleanBeth = self.__organizer.pluginSetting(self.name(), 'clean_beth')
+		cleanElse = self.__organizer.pluginSetting(self.name(), 'clean_else')
 		for plugin in pluginNames:
 			pluginDefaultState = False
 
@@ -256,7 +256,7 @@ class CleanerPlugin(mobase.IPluginTool):
 
 			self.__dialog.addPlugin(plugin, pluginList.priority(plugin), pluginDefaultState)
 
-		if self.__organizer.pluginSetting(self.name(), "sort_by_priority"):
+		if self.__organizer.pluginSetting(self.name(), 'sort_by_priority'):
 			self.__dialog.sortPlugins(key=lambda tup: tup[2])
 		else:
 			self.__dialog.sortPlugins(key=lambda tup: tup[1])
@@ -268,7 +268,7 @@ class CleanerPlugin(mobase.IPluginTool):
 
 	def runClean(self, pluginNamesSet: set[str]) -> None:
 		failed = []
-		xEditPath = "xEdit" if self.__organizer.pluginSetting(self.name(), "exe_name_xedit") else xEditExeName
+		xEditPath = 'xEdit' if self.__organizer.pluginSetting(self.name(), 'exe_name_xedit') else xEditExeName
 		cleanCount = 0
 		pluginNames = list(pluginNamesSet)
 		# Sort the plugins so they are cleaned by priority
@@ -280,17 +280,17 @@ class CleanerPlugin(mobase.IPluginTool):
 				break
 
 			args = list(launchOptions)
-			args.append(f"\"{plugin}\"")
+			args.append(f'"{plugin}"')
 
-			if self.__organizer.pluginSetting(self.name(), "explicit_data_path"):
-				args.append(f"-D:\"{self.__organizer.managedGame().dataDirectory().absolutePath()}\"")
+			if self.__organizer.pluginSetting(self.name(), 'explicit_data_path'):
+				args.append(f'-D:"{self.__organizer.managedGame().dataDirectory().absolutePath()}"')
 
-			if self.__organizer.pluginSetting(self.name(), "explicit_ini_path"):
-				args.append(f"-I:\"{self.__organizer.managedGame().documentsDirectory().path()}/{self.__organizer.managedGame().iniFiles()[0]}\"")
+			if self.__organizer.pluginSetting(self.name(), 'explicit_ini_path'):
+				args.append(f'-I:"{self.__organizer.managedGame().documentsDirectory().path()}/{self.__organizer.managedGame().iniFiles()[0]}"')
 
-			gameArg = self.__organizer.pluginSetting(self.name(), "explicit_game_arg")
+			gameArg = self.__organizer.pluginSetting(self.name(), 'explicit_game_arg')
 			if len(gameArg) > 0:
-				args.append(f"-{gameArg}")
+				args.append(f'-{gameArg}')
 
 			exe = self.__organizer.startApplication(xEditPath, args)
 
@@ -303,16 +303,16 @@ class CleanerPlugin(mobase.IPluginTool):
 				else:
 					cleanCount += 1
 			else:
-				QMessageBox.critical(self.__parentWidget, f"Failed to start {xEditPath}", f"Make sure {xEditPath} is registered as a tool")
+				QMessageBox.critical(self.__parentWidget, f'Failed to start {xEditPath}', f'Make sure {xEditPath} is registered as a tool')
 				break
 
 		if len(failed) > 0:
-			msg = ""
+			msg = ''
 			for plugin in failed:
-				msg = msg + plugin + "\n"
-			QMessageBox.critical(self.__parentWidget, "Failed to clean some plugins!", msg)
+				msg = msg + plugin + '\n'
+			QMessageBox.critical(self.__parentWidget, 'Failed to clean some plugins!', msg)
 		else:
-			QMessageBox.information(self.__parentWidget, "Clean successful", f"Successfully cleaned {cleanCount} plugins")
+			QMessageBox.information(self.__parentWidget, 'Clean successful', f'Successfully cleaned {cleanCount} plugins')
 
 def createPlugin() -> mobase.IPluginTool:
 	return CleanerPlugin()

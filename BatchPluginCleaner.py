@@ -28,9 +28,9 @@ class PluginSelectionLine(QWidget):
 
 	def setState(self, state: bool) -> None:
 		if (state == True):
-			self.__checkbox.setCheckState(2)    # 2
+			self.__checkbox.setCheckState(2)
 		else:
-			self.__checkbox.setCheckState(0)  # 0
+			self.__checkbox.setCheckState(0)
 
 class PluginListModel(QAbstractItemModel):
 	def __init__(self, parent: typing.Optional[QWidget]=None) -> None:
@@ -65,7 +65,6 @@ class PluginListModel(QAbstractItemModel):
 
 		if role in (Qt.ItemDataRole.DisplayRole, Qt.ItemDataRole.EditRole):
 			return self.__data[row][1]
-
 		return None
 
 	def setData(self, index: QModelIndex, value: typing.Any, role: int) -> bool:
@@ -82,7 +81,6 @@ class PluginListModel(QAbstractItemModel):
 				self.dataChanged.emit(index, index, [role])
 
 			return True
-
 		return False
 
 	def addPlugin(self, pluginName: str, priority: int, state: bool) -> None:
@@ -127,7 +125,6 @@ class PluginSelectWindow(QDialog):
 		selectAllButton = QPushButton("Select All")
 		selectNoneButton = QPushButton("Select None")
 		startButton = QPushButton("Clean")
-		#cancelButton = QPushButton("Cancel")
 
 		self.__layout.addWidget(self.__listView)
 
@@ -138,33 +135,25 @@ class PluginSelectWindow(QDialog):
 		buttonLayout.addWidget(selectNoneButton)
 		buttonLayout.addWidget(startButton)
 
-
 		self.__layout.addWidget(buttonHolder)
-		#self.__layout.addWidget(cancelButton)
 
 		self.setLayout(self.__layout)
 
 		selectAllButton.clicked.connect(self.__selectAll)
 		selectNoneButton.clicked.connect(self.__selectNone)
 		startButton.clicked.connect(self.__startPressed)
-		#cancelButton.clicked.connect(self.__cancel)
 
 	def addPlugin(self, pluginName: str, priority: int, defaultState: bool) -> None:
 		self.__listModel.addPlugin(pluginName, priority, defaultState)
-
 
 	def getPluginList(self) -> set[str]:
 		return self.__listModel.getEnabledPlugins()
 
 	def sortPlugins(self, key: typing.Callable) -> None:
 		self.__listModel.sortData(key)
-		#self.__listModel.dataChanged.emit(0, len(__listModel.__data) - 1, Qt.ItemDataRole.EditRole)
 
 	def __startPressed(self) -> None:
 		self.startAction.emit()
-
-	def __cancel(self) -> None:
-		self.cancelAction.emit()
 
 	def __selectNone(self) -> None:
 		self.__listModel.deselectAll()
@@ -176,7 +165,6 @@ class CleanerPlugin(mobase.IPluginTool):
 	def __init__(self) -> None:
 		super().__init__()
 		self.__canceled = False
-		self.__cleaning = False
 
 	def init(self, organizer: mobase.IOrganizer) -> bool:
 		self.__organizer = organizer
@@ -223,16 +211,21 @@ class CleanerPlugin(mobase.IPluginTool):
 		self.__parentWidget = widget
 
 	def display(self) -> None:
-
 		self.__dialog = PluginSelectWindow(self.__parentWidget)
-
 		self.__dialog.startAction.connect(self.__start)
 
 		pluginList = self.__organizer.pluginList()
 		pluginNames = pluginList.pluginNames()
 
-		# exclude Fallout4.esm because it should not be cleaned.
-		bethPlugins = { "DLCRobot.esm", "DLCworkshop01.esm", "DLCworkshop02.esm", "DLCworkshop03.esm", "DLCCoast.esm", "DLCNukaWorld.esm" }
+		# Exclude Fallout4.esm because it should not be cleaned.
+		bethPlugins = {
+			"DLCRobot.esm",
+			"DLCworkshop01.esm",
+			"DLCworkshop02.esm",
+			"DLCworkshop03.esm",
+			"DLCCoast.esm",
+			"DLCNukaWorld.esm",
+		}
 		matcher = re.compile("cc\w{6}[0-9]{3}-")
 		cleanCC = self.__organizer.pluginSetting(self.name(), "clean_cc")
 		cleanBeth = self.__organizer.pluginSetting(self.name(), "clean_beth")
@@ -261,20 +254,26 @@ class CleanerPlugin(mobase.IPluginTool):
 		self.runClean(self.__dialog.getPluginList())
 
 	def runClean(self, pluginNamesSet: set[str]) -> None:
-		self.__cleaning = True
 		failed = []
 		# Change to FO4Edit or whatever for whatever version of xEdit you are using.
 		xEditPath = "xEdit" if self.__organizer.pluginSetting(self.name(), "exe_name_xedit") else "FO4Edit"
 		cleanCount = 0
 		pluginNames = list(pluginNamesSet)
-		# sort the plugins so they are cleaned by priority
+		# Sort the plugins so they are cleaned by priority
 		pluginNames.sort(key=lambda pluginName: 0 - self.__organizer.pluginList().priority(pluginName))
 		for plugin in pluginNames:
 
 			if self.__canceled:
 				self.__canceled = False
 				break
-			args = ["-IKnowWhatImDoing", "-QuickAutoClean", "-autoexit", "-autoload", f"\"{plugin}\""]
+
+			args = [
+				"-IKnowWhatImDoing",
+				"-QuickAutoClean",
+				"-autoexit",
+				"-autoload",
+				f"\"{plugin}\""
+			]
 
 			if self.__organizer.pluginSetting(self.name(), "explicit_data_path"):
 				args.append(f"-D:\"{self.__organizer.managedGame().dataDirectory().absolutePath()}\"")
@@ -299,6 +298,7 @@ class CleanerPlugin(mobase.IPluginTool):
 			else:
 				QMessageBox.critical(self.__parentWidget, f"Failed to start {xEditPath}", f"Make sure {xEditPath} is registered as a tool")
 				break
+
 		if len(failed) > 0:
 			msg = ""
 			for plugin in failed:
@@ -306,8 +306,6 @@ class CleanerPlugin(mobase.IPluginTool):
 			QMessageBox.critical(self.__parentWidget, "Failed to clean some plugins!", msg)
 		else:
 			QMessageBox.information(self.__parentWidget, "Clean successful", f"Successfully cleaned {cleanCount} plugins")
-
-		self.__cleaning = False
 
 def createPlugin() -> mobase.IPluginTool:
 	return CleanerPlugin()

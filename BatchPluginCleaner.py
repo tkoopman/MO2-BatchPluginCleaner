@@ -409,8 +409,7 @@ class CleanerPlugin(mobase.IPluginTool):
 			mobase.PluginSetting('sort_by_priority', 'If plugins should be ordered by priority instead of alphabetically', True),
 			mobase.PluginSetting('explicit_data_path', 'If the data directory should be explicitly provided.  May need to be enabled if you get errors from xEdit.', False),
 			mobase.PluginSetting('explicit_ini_path', 'If the ini path should be explicitly provided.  May need to be enabled if you get errors from xEdit.', False),
-			mobase.PluginSetting('explicit_game_arg', 'Adds -<game> as an argument to xEdit. Options: sse tes5vr fo4vr test4 tes5 enderal fo3 fnv fo4 fo76', ''),
-			mobase.PluginSetting('exe_name_xedit', f'Invoke xEdit as xEdit, not a game-specific name such as FO4Edit. You probably need explicit_game_arg too.', False)
+			mobase.PluginSetting('exe_name_xedit', f'Invoke xEdit as xEdit, not a game-specific name such as FO4Edit.', False)
 		]
 
 	def icon(self) -> QIcon:
@@ -476,10 +475,7 @@ class CleanerPlugin(mobase.IPluginTool):
 			if self.__organizer.pluginSetting(self.name(), 'explicit_ini_path'):
 				args.append(f'-I:"{self.__organizer.managedGame().documentsDirectory().path()}/{self.__organizer.managedGame().iniFiles()[0]}"')
 
-			gameArg = self.__organizer.pluginSetting(self.name(), 'explicit_game_arg')
-			if len(gameArg) > 0:
-				args.append(f'-{gameArg}')
-
+			args.append(gameInfo[self.__organizer.managedGame().gameShortName()]["xEditSwitch"])
 			args.append(f'"{plugin}"')
 
 			exe = self.__organizer.startApplication(xEditExecutableName, args)

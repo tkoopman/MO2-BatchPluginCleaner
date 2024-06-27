@@ -392,7 +392,7 @@ class CleanerPlugin(mobase.IPluginTool):
 		return f'Clean all plugins with one button. Requres {gameInfo[self.__organizer.managedGame().gameShortName()]["xEditName"]}.'
 
 	def version(self) -> mobase.VersionInfo:
-		return mobase.VersionInfo(1, 0, 0)
+		return mobase.VersionInfo(1, 1, 0)
 
 	def isActive(self) -> mobase.MoVariant:
 		return self.__organizer.pluginSetting(self.name(), 'enabled')

@@ -11,23 +11,211 @@ from PyQt6.QtCore import Qt, pyqtSignal, QAbstractItemModel, QModelIndex
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import QMessageBox, QDialog, QVBoxLayout, QHBoxLayout, QWidget, QCheckBox, QPushButton, QListView
 
-xEditExeName = 'FO4Edit'
-mainMaster = 'Fallout4.esm'
-bethPlugins = {
-	'DLCRobot.esm',
-	'DLCworkshop01.esm',
-	'DLCworkshop02.esm',
-	'DLCworkshop03.esm',
-	'DLCCoast.esm',
-	'DLCNukaWorld.esm',
-	'DLCUltraHighResolution.esm',
-}
 launchOptions = [
 	'-IKnowWhatImDoing',
 	'-QuickAutoClean',
 	'-autoexit',
 	'-autoload',
 ]
+
+gameInfo = {
+	'Oblivion:': {
+		'xEditName': 'TES4Edit',
+		'xEditSwitch': '-tes4',
+		'mainMasters': { 'Oblivion.esm' },
+		'bethPlugins': {
+			'Update.esm',
+			'DLCBattlehornCastle.esp',
+			'DLCFrostcrag.esp',
+			'DLCHorseArmor.esp',
+			'DLCMehrunesRazor.esp',
+			'DLCOrrery.esp',
+			'DLCShiveringIsles.esp',
+			'DLCSpellTomes.esp',
+			'DLCThievesDen.esp',
+			'DLCVileLair.esp',
+			'Knights.esp',
+		},
+	},
+	'Nehrim:': {
+		'xEditName': 'TES4Edit',
+		'xEditSwitch': '-tes4',
+		'mainMasters': {
+			'Nehrim.esm',
+			'Translation.esp',
+		},
+		'bethPlugins': { },
+	},
+	'Fallout3:': {
+		'xEditName': 'FO3Edit',
+		'xEditSwitch': '-fo3',
+		'mainMasters': { 'Fallout3.esm' },
+		'bethPlugins': {
+			'Anchorage.esm',
+			'BrokenSteel.esm',
+			'PointLookout.esm',
+			'ThePitt.esm',
+			'Zeta.esm',
+		},
+	},
+	'FalloutNV:': {
+		'xEditName': 'FNVEdit',
+		'xEditSwitch': '-fnv',
+		'mainMasters': { 'FalloutNV.esm' },
+		'bethPlugins': {
+			'CaravanPack.esm',
+			'ClassicPack.esm',
+			'DeadMoney.esm',
+			'GunRunnersArsenal.esm',
+			'HonestHearts.esm',
+			'LonesomeRoad.esm',
+			'MercenaryPack.esm',
+			'OldWorldBlues.esm',
+			'TribalPack.esm',
+		},
+	},
+	'TTW:': {
+		'xEditName': 'FNVEdit',
+		'xEditSwitch': '-fnv',
+		'mainMasters': {
+			'Fallout3.esm',
+			'FalloutNV.esm',
+			'TaleofTwoWastelands.esm',
+			'YUPTTW.esm',
+		},
+		'bethPlugins': {
+			'Anchorage.esm',
+			'BrokenSteel.esm',
+			'ThePitt.esm',
+			'PointLookout.esm',
+			'Zeta.esm',
+			'CaravanPack.esm',
+			'ClassicPack.esm',
+			'DeadMoney.esm',
+			'GunRunnersArsenal.esm',
+			'HonestHearts.esm',
+			'LonesomeRoad.esm',
+			'MercenaryPack.esm',
+			'OldWorldBlues.esm',
+			'TribalPack.esm',
+		},
+	},
+	'Skyrim:': {
+		'xEditName': 'TES5Edit',
+		'xEditSwitch': '-tes5',
+		'mainMasters': { 'Skyrim.esm' },
+		'bethPlugins': {
+			'Update.esm',
+			'Dawnguard.esm',
+			'HearthFires.esm',
+			'Dragonborn.esm',
+			'HighResTexturePack01.esp',
+			'HighResTexturePack02.esp',
+			'HighResTexturePack03.esp',
+		},
+	},
+	'SkyrimSE:': {
+		'xEditName': 'SSEEdit',
+		'xEditSwitch': '-sse',
+		'mainMasters': { 'Skyrim.esm' },
+		'bethPlugins': {
+			'Update.esm',
+			'Dawnguard.esm',
+			'HearthFires.esm',
+			'Dragonborn.esm',
+		},
+	},
+	'SkyrimVR:': {
+		'xEditName': 'TES5VREdit',
+		'xEditSwitch': '-tes5vr',
+		'mainMasters': {
+			'Skyrim.esm',
+			'SkyrimVR.esm',
+		},
+		'bethPlugins': {
+			'Update.esm',
+			'Dawnguard.esm',
+			'HearthFires.esm',
+			'Dragonborn.esm',
+		},
+	},
+	'Enderal:': {
+		'xEditName': 'EnderalEdit',
+		'xEditSwitch': '-enderal',
+		'mainMasters': {
+			'Skyrim.esm',
+			'Enderal - Forgotten Stories.esm',
+		},
+		'bethPlugins': { 'Update.esm' },
+	},
+	'EnderalSE:': {
+		'xEditName': 'EnderalSEEdit',
+		'xEditSwitch': '-enderalse',
+		'mainMasters': {
+			'Skyrim.esm',
+			'Enderal - Forgotten Stories.esm',
+			'SkyUI_SE.esp',
+		},
+		'bethPlugins': {
+			'Update.esm',
+			'Dawnguard.esm',
+			'HearthFires.esm',
+			'Dragonborn.esm',
+		},
+	},
+	'Fallout4': {
+		'xEditName': 'FO4Edit',
+		'xEditSwitch': '-fo4',
+		'mainMasters': { 'Fallout4.esm' },
+		'bethPlugins': {
+			'DLCRobot.esm',
+			'DLCworkshop01.esm',
+			'DLCworkshop02.esm',
+			'DLCworkshop03.esm',
+			'DLCCoast.esm',
+			'DLCNukaWorld.esm',
+			'DLCUltraHighResolution.esm',
+		},
+	},
+	'Fallout4VR:': {
+		'xEditName': 'FO4VREdit',
+		'xEditSwitch': '-fo4vr',
+		'mainMasters': {
+			'Fallout4.esm',
+			'Fallout4_VR.esm',
+		},
+		'bethPlugins': {
+			'DLCRobot.esm',
+			'DLCworkshop01.esm',
+			'DLCworkshop02.esm',
+			'DLCworkshop03.esm',
+			'DLCCoast.esm',
+			'DLCNukaWorld.esm',
+			'DLCUltraHighResolution.esm',
+		},
+	},
+	'Fallout76:': {
+		'xEditName': 'FO76Edit',
+		'xEditSwitch': '-fo76',
+		'mainMasters': { 'SeventySix.esm' },
+		'bethPlugins': { 'NW.esm' },
+	},
+	'Starfield:': {
+		'xEditName': 'SF1Edit',
+		'xEditSwitch': '-sf1',
+		'mainMasters': { 'Starfield.esm' },
+		'bethPlugins': {
+			'Constellation.esm',
+			'BlueprintShips-Starfield.esm',
+			'OldMars.esm',
+			'SFBGS003.esm',
+			'SFBGS006.esm',
+			'SFBGS007.esm',
+			'SFBGS008.esm',
+		},
+	},
+}
+
 ccPattern = re.compile('cc\w{6}[0-9]{3}-')
 
 class PluginSelectionLine(QWidget):
@@ -201,7 +389,7 @@ class CleanerPlugin(mobase.IPluginTool):
 		return 'Clean Plugins'
 
 	def description(self) -> str:
-		return f'Clean all plugins with one button. Requres {xEditExeName}.'
+		return f'Clean all plugins with one button. Requres {gameInfo[self.__organizer.managedGame().gameShortName()]["xEditName"]}.'
 
 	def version(self) -> mobase.VersionInfo:
 		return mobase.VersionInfo(1, 0, 0)
@@ -222,7 +410,7 @@ class CleanerPlugin(mobase.IPluginTool):
 			mobase.PluginSetting('explicit_data_path', 'If the data directory should be explicitly provided.  May need to be enabled if you get errors from xEdit.', False),
 			mobase.PluginSetting('explicit_ini_path', 'If the ini path should be explicitly provided.  May need to be enabled if you get errors from xEdit.', False),
 			mobase.PluginSetting('explicit_game_arg', 'Adds -<game> as an argument to xEdit. Options: sse tes5vr fo4vr test4 tes5 enderal fo3 fnv fo4 fo76', ''),
-			mobase.PluginSetting('exe_name_xedit', f'Invoke xEdit as xEdit, not {xEditExeName}. You probably need explicit_game_arg too.', False)
+			mobase.PluginSetting('exe_name_xedit', f'Invoke xEdit as xEdit, not a game-specific name such as FO4Edit. You probably need explicit_game_arg too.', False)
 		]
 
 	def icon(self) -> QIcon:
@@ -237,8 +425,9 @@ class CleanerPlugin(mobase.IPluginTool):
 
 		pluginList = self.__organizer.pluginList()
 		pluginNames = list(pluginList.pluginNames())
-		# Exclude main esm because it should not be cleaned.
-		pluginNames.remove(mainMaster)
+		# Exclude main masters because they should not be cleaned.
+		for master in gameInfo[self.__organizer.managedGame().gameShortName()]['mainMasters']:
+			pluginNames.remove(master)
 
 		cleanCC = self.__organizer.pluginSetting(self.name(), 'clean_cc')
 		cleanBeth = self.__organizer.pluginSetting(self.name(), 'clean_beth')
@@ -248,7 +437,7 @@ class CleanerPlugin(mobase.IPluginTool):
 
 			if pluginList.state(plugin) == mobase.PluginState.ACTIVE:
 				isCC = ccPattern.match(plugin) is not None
-				isBeth = plugin in bethPlugins
+				isBeth = plugin in gameInfo[self.__organizer.managedGame().gameShortName()]['bethPlugins']
 				if (cleanCC and isCC) or (cleanBeth and isBeth):
 					pluginDefaultState = True
 				if not isBeth and not isCC and cleanElse:
@@ -268,7 +457,7 @@ class CleanerPlugin(mobase.IPluginTool):
 
 	def runClean(self, pluginNamesSet: set[str]) -> None:
 		failed = []
-		xEditPath = 'xEdit' if self.__organizer.pluginSetting(self.name(), 'exe_name_xedit') else xEditExeName
+		xEditExecutableName = 'xEdit' if self.__organizer.pluginSetting(self.name(), 'exe_name_xedit') else gameInfo[self.__organizer.managedGame().gameShortName()]['xEditName']
 		cleanCount = 0
 		pluginNames = list(pluginNamesSet)
 		# Sort the plugins so they are cleaned by priority
@@ -280,7 +469,6 @@ class CleanerPlugin(mobase.IPluginTool):
 				break
 
 			args = list(launchOptions)
-			args.append(f'"{plugin}"')
 
 			if self.__organizer.pluginSetting(self.name(), 'explicit_data_path'):
 				args.append(f'-D:"{self.__organizer.managedGame().dataDirectory().absolutePath()}"')
@@ -292,8 +480,9 @@ class CleanerPlugin(mobase.IPluginTool):
 			if len(gameArg) > 0:
 				args.append(f'-{gameArg}')
 
-			exe = self.__organizer.startApplication(xEditPath, args)
+			args.append(f'"{plugin}"')
 
+			exe = self.__organizer.startApplication(xEditExecutableName, args)
 			if exe != 0:
 				waitResult, exitCode = self.__organizer.waitForApplication(exe, False)
 				if not waitResult:
@@ -303,7 +492,7 @@ class CleanerPlugin(mobase.IPluginTool):
 				else:
 					cleanCount += 1
 			else:
-				QMessageBox.critical(self.__parentWidget, f'Failed to start {xEditPath}', f'Make sure {xEditPath} is registered as a tool')
+				QMessageBox.critical(self.__parentWidget, f'Failed to start {xEditExecutableName}', f'Make sure {xEditExecutableName} is registered as a tool')
 				break
 
 		if len(failed) > 0:

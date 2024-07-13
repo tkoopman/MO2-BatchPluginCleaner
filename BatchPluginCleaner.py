@@ -19,7 +19,7 @@ launchOptions = [
 ]
 
 gameInfo = {
-	'Oblivion:': {
+	'Oblivion': {
 		'xEditName': 'TES4Edit',
 		'xEditSwitch': '-tes4',
 		'mainMasters': { 'Oblivion.esm' },
@@ -37,7 +37,7 @@ gameInfo = {
 			'Knights.esp',
 		},
 	},
-	'Nehrim:': {
+	'Nehrim': {
 		'xEditName': 'TES4Edit',
 		'xEditSwitch': '-tes4',
 		'mainMasters': {
@@ -46,7 +46,7 @@ gameInfo = {
 		},
 		'bethPlugins': { },
 	},
-	'Fallout3:': {
+	'Fallout3': {
 		'xEditName': 'FO3Edit',
 		'xEditSwitch': '-fo3',
 		'mainMasters': { 'Fallout3.esm' },
@@ -58,7 +58,7 @@ gameInfo = {
 			'Zeta.esm',
 		},
 	},
-	'FalloutNV:': {
+	'FalloutNV': {
 		'xEditName': 'FNVEdit',
 		'xEditSwitch': '-fnv',
 		'mainMasters': { 'FalloutNV.esm' },
@@ -74,7 +74,7 @@ gameInfo = {
 			'TribalPack.esm',
 		},
 	},
-	'TTW:': {
+	'TTW': {
 		'xEditName': 'FNVEdit',
 		'xEditSwitch': '-fnv',
 		'mainMasters': {
@@ -100,7 +100,7 @@ gameInfo = {
 			'TribalPack.esm',
 		},
 	},
-	'Skyrim:': {
+	'Skyrim': {
 		'xEditName': 'TES5Edit',
 		'xEditSwitch': '-tes5',
 		'mainMasters': { 'Skyrim.esm' },
@@ -114,7 +114,7 @@ gameInfo = {
 			'HighResTexturePack03.esp',
 		},
 	},
-	'SkyrimSE:': {
+	'SkyrimSE': {
 		'xEditName': 'SSEEdit',
 		'xEditSwitch': '-sse',
 		'mainMasters': { 'Skyrim.esm' },
@@ -125,7 +125,7 @@ gameInfo = {
 			'Dragonborn.esm',
 		},
 	},
-	'SkyrimVR:': {
+	'SkyrimVR': {
 		'xEditName': 'TES5VREdit',
 		'xEditSwitch': '-tes5vr',
 		'mainMasters': {
@@ -139,7 +139,7 @@ gameInfo = {
 			'Dragonborn.esm',
 		},
 	},
-	'Enderal:': {
+	'Enderal': {
 		'xEditName': 'EnderalEdit',
 		'xEditSwitch': '-enderal',
 		'mainMasters': {
@@ -148,7 +148,7 @@ gameInfo = {
 		},
 		'bethPlugins': { 'Update.esm' },
 	},
-	'EnderalSE:': {
+	'EnderalSE': {
 		'xEditName': 'EnderalSEEdit',
 		'xEditSwitch': '-enderalse',
 		'mainMasters': {
@@ -177,7 +177,7 @@ gameInfo = {
 			'DLCUltraHighResolution.esm',
 		},
 	},
-	'Fallout4VR:': {
+	'Fallout4VR': {
 		'xEditName': 'FO4VREdit',
 		'xEditSwitch': '-fo4vr',
 		'mainMasters': {
@@ -194,13 +194,13 @@ gameInfo = {
 			'DLCUltraHighResolution.esm',
 		},
 	},
-	'Fallout76:': {
+	'Fallout76': {
 		'xEditName': 'FO76Edit',
 		'xEditSwitch': '-fo76',
 		'mainMasters': { 'SeventySix.esm' },
 		'bethPlugins': { 'NW.esm' },
 	},
-	'Starfield:': {
+	'Starfield': {
 		'xEditName': 'SF1Edit',
 		'xEditSwitch': '-sf1',
 		'mainMasters': { 'Starfield.esm' },

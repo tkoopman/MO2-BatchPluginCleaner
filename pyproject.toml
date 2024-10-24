@@ -1,3 +1,8 @@
+[project]
+name = "mo2-batchplugincleaner"
+version = "1.1.1"
+requires-python = ">=3.12"
+
 [tool.poetry]
 name = "mo2-batchplugincleaner"
 version = "1.1.1"
@@ -47,6 +52,7 @@ ignore = [
 	"TRY400",  # Use `logging.exception` instead of `logging.error`
 	"UP027",   # Deprecated
 	"PLR2004", # Allow magic values in comparisons
+	"PLR6301", # no-self-use
 	"PLW2901", # Allow overwriting loop variables
 ]
 

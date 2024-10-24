@@ -439,7 +439,8 @@ class CleanerPlugin(mobase.IPluginTool):
 		pluginNames = list(pluginList.pluginNames())
 		# Exclude main masters because they should not be cleaned.
 		for master in gameInfo[self.__organizer.managedGame().gameShortName()]["mainMasters"]:
-			pluginNames.remove(master)
+			if master in pluginNames:
+				pluginNames.remove(master)
 
 		cleanCC = self.__organizer.pluginSetting(self.name(), "clean_cc")
 		cleanBeth = self.__organizer.pluginSetting(self.name(), "clean_beth")

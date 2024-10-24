@@ -1,0 +1,95 @@
+[tool.poetry]
+name = "mo2-batchplugincleaner"
+version = "1.1.1"
+description = "Plugin for Mod Organizer 2 that will automatically run FO4Edit Quick Auto Clean on a set of plugins."
+authors = ["bluebuiy", "wxMichael"]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+pyqt6 = "^6.7.1"
+
+[tool.poetry.group.dev.dependencies]
+mobase-stubs = "^2.5.2"
+mypy = "^1.13.0"
+poetry-plugin-up = "^0.7.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pyright]
+typeCheckingMode = "standard"
+reportUnusedImport = false    # Redundant with Ruff F401
+
+[tool.ruff]
+indent-width = 4
+line-length = 120
+
+[tool.ruff.format]
+preview = true
+indent-style = "tab"
+line-ending = "auto"
+quote-style = "double"
+skip-magic-trailing-comma = false
+
+[tool.ruff.lint]
+ignore = [
+	"ANN101",  # Deprecated
+	"ANN401",  # Allow use of typing.Any
+	"E501",    # Duplicate of B950 line-too-long
+	"E722",    # Duplicate of B001 bare-except
+	"PLR0904", # too-many-public-methods
+	"PLR0912", # too-many-branches
+	"PLR0914", # too-many-local-variables
+	"PLR0915", # too-many-statements
+	"PLR1702", # too-many-nested-blocks
+	"TRY003",  # Allow custom exception messages
+	"TRY400",  # Use `logging.exception` instead of `logging.error`
+	"UP027",   # Deprecated
+	"PLR2004", # Allow magic values in comparisons
+	"PLW2901", # Allow overwriting loop variables
+]
+
+extend-select = [
+	"A",     # Builtin Shadowing
+	"ANN",   # Type Annotations
+	"ASYNC", # Async Suggestions
+	"ARG",   # Unused Arguments
+	"B",     # Bugs/Design Problems
+	"BLE",   # Blind Except
+	"C4",    # Comprehensions
+	"FA",    # Future Annotations
+	"FLY",   # F-Strings
+	"FURB",  # Modernization
+	"I",     # Import Sorting
+	"ICN",   # Import Naming Conventions
+	"ISC",   # Implicit String Concatenation
+	"LOG",   # Logging
+	"PERF",  # Performance Anti-Patterns
+	"PIE",   # Misc Lints
+	"PL",    # Pylint
+	"PT",    # PyTest
+	"PTH",   # Prefer Pathlib
+	"RET",   # Return
+	"RSE",   # Raise
+	"RUF",   # Ruff
+	"SIM",   # Simplify
+	"SLF",   # Self
+	"TCH",   # Type Checking
+	"TID",   # Tidy Imports
+	"TRY",   # Exception Anti-Patterns
+	"UP",    # pyupgrade (New Syntax Suggestions)
+
+	# "D",     # pydocstyle
+	# "C901",  # Complex Structures
+	# "COM",   # Commas
+	# "DTZ",   # Unsafe/Naive Datetimes
+	# "EM",    # Exception Messages
+	# "FBT",   # Boolean Traps
+	# "G",     # Logging Formatting
+	# "N",     # PEP8 Naming Conventions
+	# "PGH",   # PyGrep Hooks
+	# "PYI",   # Stub Files
+	# "Q",     # Quotes
+	# "S",     # Security Testing
+]

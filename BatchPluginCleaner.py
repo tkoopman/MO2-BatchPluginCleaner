@@ -2,8 +2,9 @@
 # Original Mod Page: https://www.nexusmods.com/skyrimspecialedition/mods/59598
 # This ver Mod Page: https://www.nexusmods.com/fallout4/mods/84962
 # Modified for Fallout 4
-# For mo 2.5.0+. Use at your own risk.
+# For mo 2.5.2+. Use at your own risk.
 
+import operator
 import re
 import typing
 
@@ -19,7 +20,15 @@ launchOptions = [
 	"-autoload",
 ]
 
-gameInfo = {
+
+class GameInfo(typing.TypedDict):
+	xEditName: str
+	xEditSwitch: str
+	mainMasters: set[str]
+	bethPlugins: set[str]
+
+
+gameInfo: dict[str, GameInfo] = {
 	"Oblivion": {
 		"xEditName": "TES4Edit",
 		"xEditSwitch": "-tes4",
@@ -45,7 +54,7 @@ gameInfo = {
 			"Nehrim.esm",
 			"Translation.esp",
 		},
-		"bethPlugins": {},
+		"bethPlugins": set(),
 	},
 	"Fallout3": {
 		"xEditName": "FO3Edit",
@@ -223,8 +232,8 @@ ccPattern = re.compile(r"cc\w{6}[0-9]{3}-")
 class PluginSelectionLine(QWidget):
 	enableChange = pyqtSignal(bool, str)
 
-	def __init__(self, pluginName: str, parent: typing.Optional[QWidget] = None) -> None:
-		super(PluginSelectionLine, self).__init__(parent)
+	def __init__(self, pluginName: str, parent: QWidget | None = None) -> None:
+		super().__init__(parent)
 		self.__pluginName = pluginName
 		self.__checkbox = QCheckBox(pluginName, self)
 		self.__checkbox.stateChanged.connect(self.__checkboxChange)
@@ -232,52 +241,52 @@ class PluginSelectionLine(QWidget):
 		layout = QVBoxLayout(self)
 		layout.addWidget(self.__checkbox)
 
-	def __checkboxChange(self, state: Qt.CheckState) -> None:
+	def __checkboxChange(self, state: Qt.CheckState) -> None:  # noqa: ARG002
 		self.enableChange.emit(self.__checkbox.isChecked(), self.__pluginName)
 
 	def setState(self, state: bool) -> None:
 		if state:
-			self.__checkbox.setCheckState(2)
+			self.__checkbox.setCheckState(2)  # type: ignore
 		else:
-			self.__checkbox.setCheckState(0)
+			self.__checkbox.setCheckState(0)  # type: ignore
 
 
 class PluginListModel(QAbstractItemModel):
-	def __init__(self, parent: typing.Optional[QWidget] = None) -> None:
-		super(PluginListModel, self).__init__(parent)
+	def __init__(self, parent: QWidget | None = None) -> None:
+		super().__init__(parent)
 		self.__data: list[tuple[bool, str, int]] = []
 
 	def flags(self, index: QModelIndex) -> Qt.ItemFlag:
 		if index.isValid():
 			return Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsUserCheckable
+		return None  # type: ignore
 
-	def index(self, row: int, col: int, parent: QModelIndex) -> QModelIndex:
-		if col == 0:
-			return self.createIndex(row, col, self.__data[row][1])
+	def index(self, row: int, column: int, parent: QModelIndex | None = None) -> QModelIndex:  # noqa: ARG002
+		if column == 0:
+			return self.createIndex(row, column, self.__data[row][1])
 		return QModelIndex()
 
-	def parent(self, childIndex: QModelIndex) -> QModelIndex:
+	def parent(self, child: QModelIndex) -> QModelIndex | None:  # type: ignore  # noqa: ARG002
 		return QModelIndex()
 
-	def rowCount(self, index: QModelIndex) -> int:
+	def rowCount(self, parent: QModelIndex | None = None) -> int:  # noqa: ARG002
 		return len(self.__data)
 
-	def columnCount(self, index: QModelIndex) -> int:
+	def columnCount(self, parent: QModelIndex | None = None) -> int:  # noqa: ARG002
 		return 1
 
-	def data(self, index: QModelIndex, role: int):
+	def data(self, index: QModelIndex, role: int = Qt.ItemDataRole.EditRole) -> Qt.CheckState | str | None:
 		row = index.row()
 		if role == Qt.ItemDataRole.CheckStateRole:
 			if self.__data[row][0]:
 				return Qt.CheckState.Checked
-			else:
-				return Qt.CheckState.Unchecked
+			return Qt.CheckState.Unchecked
 
-		if role in (Qt.ItemDataRole.DisplayRole, Qt.ItemDataRole.EditRole):
+		if role in {Qt.ItemDataRole.DisplayRole, Qt.ItemDataRole.EditRole}:
 			return self.__data[row][1]
 		return None
 
-	def setData(self, index: QModelIndex, value: typing.Any, role: int) -> bool:
+	def setData(self, index: QModelIndex, value: typing.Any, role: int = Qt.ItemDataRole.CheckStateRole) -> bool:
 		if role == Qt.ItemDataRole.CheckStateRole and index.isValid():
 			inState = None
 			# I have no idea how these are supposed to be referenced. Qt.CheckState.Checked and Qt.CheckState.Unchecked are not working.
@@ -325,8 +334,8 @@ class PluginSelectWindow(QDialog):
 	startAction = pyqtSignal()
 	cancelAction = pyqtSignal()
 
-	def __init__(self, parent: typing.Optional[QWidget] = None) -> None:
-		super(PluginSelectWindow, self).__init__(parent)
+	def __init__(self, parent: QWidget | None = None) -> None:
+		super().__init__(parent)
 		self.setWindowFlags(self.windowFlags() & ~Qt.WindowType.WindowContextHelpButtonHint)
 		self.setWindowTitle("Batch Plugin Cleaner")
 		self.resize(400, 600)
@@ -422,14 +431,14 @@ class CleanerPlugin(mobase.IPluginTool):
 				"If the ini path should be explicitly provided.  May need to be enabled if you get errors from xEdit.",
 				False,
 			),
-			mobase.PluginSetting("exe_name_xedit", f"Invoke xEdit as xEdit, not a game-specific name such as FO4Edit.", False),
+			mobase.PluginSetting("exe_name_xedit", "Invoke xEdit as xEdit, not a game-specific name such as FO4Edit.", False),
 		]
 
 	def icon(self) -> QIcon:
 		return QIcon()
 
-	def setParentWidget(self, widget: QWidget) -> None:
-		self.__parentWidget = widget
+	def setParentWidget(self, parent: QWidget) -> None:
+		self.__parentWidget = parent
 
 	def display(self) -> None:
 		self.__dialog = PluginSelectWindow(self.__parentWidget)
@@ -459,9 +468,9 @@ class CleanerPlugin(mobase.IPluginTool):
 			self.__dialog.addPlugin(plugin, pluginList.priority(plugin), pluginDefaultState)
 
 		if self.__organizer.pluginSetting(self.name(), "sort_by_priority"):
-			self.__dialog.sortPlugins(key=lambda tup: tup[2])
+			self.__dialog.sortPlugins(key=operator.itemgetter(2))
 		else:
-			self.__dialog.sortPlugins(key=lambda tup: tup[1])
+			self.__dialog.sortPlugins(key=operator.itemgetter(1))
 
 		self.__dialog.open()
 
@@ -494,8 +503,10 @@ class CleanerPlugin(mobase.IPluginTool):
 					f'-I:"{self.__organizer.managedGame().documentsDirectory().path()}/{self.__organizer.managedGame().iniFiles()[0]}"'
 				)
 
-			args.append(gameInfo[self.__organizer.managedGame().gameShortName()]["xEditSwitch"])
-			args.append(f'"{plugin}"')
+			args.extend((
+				gameInfo[self.__organizer.managedGame().gameShortName()]["xEditSwitch"],
+				f'"{plugin}"',
+			))
 
 			exe = self.__organizer.startApplication(xEditExecutableName, args)
 			if exe != 0:

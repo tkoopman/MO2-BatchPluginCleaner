@@ -216,7 +216,7 @@ gameInfo = {
 	},
 }
 
-ccPattern = re.compile('cc\w{6}[0-9]{3}-')
+ccPattern = re.compile(r'cc\w{6}[0-9]{3}-')
 
 class PluginSelectionLine(QWidget):
 	enableChange = pyqtSignal(bool, str)

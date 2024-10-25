@@ -289,6 +289,7 @@ class PluginListModel(QAbstractItemModel):
 	def setData(self, index: QModelIndex, value: typing.Any, role: int = Qt.ItemDataRole.CheckStateRole) -> bool:
 		if role == Qt.ItemDataRole.CheckStateRole and index.isValid():
 			inState = None
+			# Comment from bluebuiy:
 			# I have no idea how these are supposed to be referenced. Qt.CheckState.Checked and Qt.CheckState.Unchecked are not working.
 			if value == 2:
 				inState = True
@@ -478,7 +479,7 @@ class CleanerPlugin(mobase.IPluginTool):
 		self.runClean(self.__dialog.getPluginList())
 
 	def runClean(self, pluginNamesSet: set[str]) -> None:
-		failed = []
+		failed: list[str] = []
 		xEditExecutableName = (
 			"xEdit"
 			if self.__organizer.pluginSetting(self.name(), "exe_name_xedit")
@@ -509,28 +510,25 @@ class CleanerPlugin(mobase.IPluginTool):
 			))
 
 			exe = self.__organizer.startApplication(xEditExecutableName, args)
-			if exe != 0:
-				waitResult, exitCode = self.__organizer.waitForApplication(exe, False)
-				if not waitResult:
-					self.__canceled = True
-				elif exitCode != 0:
-					failed.append(plugin)
-				else:
-					cleanCount += 1
-			else:
+			if exe == mobase.INVALID_HANDLE_VALUE:
 				QMessageBox.critical(
 					self.__parentWidget,
-					f"Failed to start {xEditExecutableName}",
-					f"Make sure {xEditExecutableName} is registered as a tool",
+					"Failed to start xEdit",
+					f'Make sure xEdit is registered as an executable (Ctrl+E) with the name "{xEditExecutableName}"',
 				)
-				break
+				return
 
-		if len(failed) > 0:
-			msg = ""
-			for plugin in failed:
-				msg = msg + plugin + "\n"
-			QMessageBox.critical(self.__parentWidget, "Failed to clean some plugins!", msg)
-		else:
+			waitResult, exitCode = self.__organizer.waitForApplication(exe, False)
+			if not waitResult:
+				self.__canceled = True
+			elif exitCode != 0:
+				failed.append(plugin)
+			else:
+				cleanCount += 1
+
+		if failed:
+			QMessageBox.critical(self.__parentWidget, "Failed to clean some plugins!", "\n".join(failed))
+		elif cleanCount > 0:
 			QMessageBox.information(self.__parentWidget, "Clean successful", f"Successfully cleaned {cleanCount} plugins")
 
 
